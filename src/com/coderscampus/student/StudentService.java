@@ -1,24 +1,35 @@
 package com.coderscampus.student;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.coderscampus.file.FileService;
 
 public class StudentService {
 
 	private FileService fs = null;
-
 	private String[] data;
 	private Student[] students;
 
-	public StudentService(String _filename) throws IOException {
-		this.fs = new FileService(_filename);
+	public StudentService(FileService fs) throws IOException {
+		this.fs = fs;
+		loadStudents();
+		sortStudents();
+	}
+
+	private void loadStudents() throws IOException {
 		this.data = fs.read();
 		this.students = new Student[data.length];
+
+		this.setStudents();
+	}
+
+	private void sortStudents() {
+		Arrays.sort(this.students);
 	}
 
 	public Student[] getStudents() {
-		return students;
+		return this.students;
 	}
 
 	public void setStudents() {
@@ -32,23 +43,23 @@ public class StudentService {
 		}
 	}
 
-	public Student createStudent(String[] params) {
-		Integer _id = Integer.parseInt(params[0]);
-		String _name = params[1];
-		String _course = params[2];
-		Integer _grade = Integer.parseInt(params[3]);
+	private Student createStudent(String[] params) {
+		Integer id = Integer.parseInt(params[0]);
+		String name = params[1];
+		String course = params[2];
+		Integer grade = Integer.parseInt(params[3]);
 
-		return new Student(_id, _name, _course, _grade);
+		return new Student(id, name, course, grade);
 	}
 
-	public Student[] getStudentsByCourse(Student[] _array, String _regex) {
-		int count = this.getStudentsCountByCourse(_array, _regex);
+	public Student[] getStudentsByCourse(String courseKey) {
+		int count = this.getStudentsCountByCourse(courseKey);
 		Student[] array = new Student[count];
 
 		int counter = 0;
 
-		for (Student student : _array) {
-			if (student.getCourse().matches(".*" + _regex + ".*")) {
+		for (Student student : this.students) {
+			if (student.getCourse().matches(".*" + courseKey + ".*")) {
 				array[counter] = student;
 				counter++;
 			}
@@ -57,11 +68,12 @@ public class StudentService {
 		return array;
 	}
 
-	public int getStudentsCountByCourse(Student[] _array, String _regex) {
+	private int getStudentsCountByCourse(String courseKey) {
 		int count = 0;
 
-		for (Student student : _array) {
-			if (student.getCourse().matches(".*" + _regex + ".*")) count++;
+		for (Student student : this.students) {
+			if (student.getCourse().matches(".*" + courseKey + ".*"))
+				count++;
 		}
 
 		return count;

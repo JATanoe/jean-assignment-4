@@ -1,14 +1,14 @@
 package com.coderscampus.student;
 
 public class Student implements Comparable<Student> {
-	
+
 	private Integer id;
 	private String name;
 	private String course;
 	private Integer grade;
 
 	public Student(Integer id, String name, String course, Integer grade) {
-		this.id = id;                                                                                              
+		this.id = id;
 		this.name = name;
 		this.course = course;
 		this.grade = grade;

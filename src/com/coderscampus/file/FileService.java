@@ -10,18 +10,20 @@ import com.coderscampus.student.Student;
 
 public class FileService implements Fileable {
 
+	private String MASTERLISTFILEPATH = "student-master-list.csv";
+
 	private BufferedReader reader = null;
 	private BufferedWriter writer = null;
-	
+
 	Student[] data = null;
 
-	public FileService(String _file) throws IOException {
-		this.reader = new BufferedReader(new FileReader(_file));
+	public FileService() throws IOException {
+		this.reader = new BufferedReader(new FileReader(MASTERLISTFILEPATH));
 	}
 
-	public FileService(Student[] _data, String _file) throws IOException {
-		this.writer = new BufferedWriter(new FileWriter(_file));
-		this.data = _data;
+	public FileService(Student[] data, String file) throws IOException {
+		this.writer = new BufferedWriter(new FileWriter(file));
+		this.data = data;
 	}
 
 	public String[] read() throws IOException {
@@ -31,13 +33,9 @@ public class FileService implements Fileable {
 			String line;
 			int i = 0;
 
+			String headLine = this.reader.readLine();
 			while ((line = this.reader.readLine()) != null) {
-				if (i == 0) {
-					i++;
-					continue;
-				}
-
-				lines[i - 1] = line;
+				lines[i] = line;
 				i++;
 			}
 
@@ -54,16 +52,16 @@ public class FileService implements Fileable {
 	}
 
 	@Override
-	public void write() throws IOException {
+	public void write(Student[] students, String filename) throws IOException {
 
 		try {
-
+			this.writer = new BufferedWriter(new FileWriter(filename));
 			this.writer.write("Student ID,Student Name,Course,Grade\n");
-			for (Student student: this.data) {
+			for (Student student : students) {
 				this.writer.write(student.toString());
-				this.writer.newLine();				
+				this.writer.newLine();
 			}
-			
+
 		} finally {
 			this.writer.close();
 		}
